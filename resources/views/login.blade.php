@@ -3,101 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Refreskar</title>
+    <title>Login - Painel Refreskar</title>
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <style>
-        /* Estilos gerais da página */
-        body {
+        :root {
+            --cor-fundo: #f4f7fa;
+            --cor-principal: #3b82f6;
+            --cor-texto-escuro: #0f172a;
+            --cor-texto-claro: #64748b;
+            --cor-card-fundo: #ffffff;
+            --cor-sombra: rgba(0, 0, 0, 0.08);
+            --cor-perigo: #ef4444;
+        }
+
+        * {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #f0f2f5; /* Cinza claro de fundo */
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--cor-fundo);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            color: var(--cor-texto-escuro);
         }
 
-        /* Container principal do formulário */
         .login-container {
-            text-align: center;
             width: 100%;
-            max-width: 380px;
+            max-width: 400px;
             padding: 20px;
         }
 
-        /* Estilo do Logo */
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            color: #005a9c; /* Azul escuro do logo */
+        .login-card {
+            background-color: var(--cor-card-fundo);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--cor-sombra);
+            text-align: center;
+        }
+
+        .logo-container {
             margin-bottom: 20px;
-            /* Simulação do contorno e setas do logo original */
-            border: 3px solid #005a9c;
-            border-radius: 50px / 30px;
-            padding: 10px 20px;
-            display: inline-block;
+        }
+
+        .logo-container img {
+            max-width: 200px;
+        }
+
+        .login-card h2 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .login-card p {
+            color: var(--cor-texto-claro);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
             position: relative;
+            margin-bottom: 20px;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1.2em;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 15px 14px 50px; /* Espaço para o ícone */
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--cor-principal);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+        }
+
+        .form-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--cor-texto-claro);
+            cursor: pointer;
+        }
+
+        .form-options a {
+            color: var(--cor-principal);
+            text-decoration: none;
         }
         
-        /* Título "Login" */
-        .login-title {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 30px;
-            font-weight: 400;
+        .form-options a:hover {
+            text-decoration: underline;
         }
 
-        /* Estilo dos campos de entrada */
-        .input-field {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box; /* Garante que o padding não afete a largura total */
-            font-size: 16px;
+        .error-message {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.9em;
         }
-
-        /* Remove a borda azul ao focar no campo */
-        .input-field:focus {
-            outline: none;
-            border-color: #007bff;
-        }
-
-        /* Estilo do botão de login */
-        .login-button {
+        
+        /* ✅ BOTÃO COM GRADIENTE ANIMADO JÁ INTEGRADO */
+        .button-login {
             width: 100%;
             padding: 15px;
             border: none;
-            border-radius: 6px;
             color: white;
-            font-size: 18px;
-            font-weight: bold;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
             cursor: pointer;
-            /* Gradiente de azul do botão */
-            background: linear-gradient(to right, #00b4d8, #0077b6);
-            transition: opacity 0.3s ease;
+            transition: all 0.3s ease;
+            background: linear-gradient(-45deg, #3b82f6, #60a5fa, #1d4ed8, #2563eb);
+            background-size: 400% 400%;
+            animation: gradient-animation 10s ease infinite;
         }
 
-        /* Efeito ao passar o mouse sobre o botão */
-        .login-button:hover {
-            opacity: 0.9;
+        .button-login:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
         }
+
+        /* ✅ ANIMAÇÃO DO GRADIENTE JÁ INTEGRADA */
+        @keyframes gradient-animation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
     </style>
 </head>
 <body>
 
     <div class="login-container">
-        <div class="logo">
-            (REFRESKAR)
+        <div class="login-card">
+            <div class="logo-container">
+                <img src="https://i.imgur.com/example-logo.png" alt="Logo Refreskar">
+            </div>
+            <h2>Acesse o Painel</h2>
+            <p>Bem-vindo! Faça login para continuar.</p>
+
+            <form>
+                <div class="form-group">
+                    <i class="ph ph-user"></i>
+                    <input type="email" name="email" class="form-input" placeholder="Email do usuário" required>
+                </div>
+
+                <div class="form-group">
+                    <i class="ph ph-lock-key"></i>
+                    <input type="password" name="password" class="form-input" placeholder="Senha" required>
+                </div>
+
+                <div class="form-options">
+                    <label>
+                        <input type="checkbox" name="remember">
+                        Lembrar-me
+                    </label>
+                    <a href="#">Esqueceu sua senha?</a>
+                </div>
+                
+                <button type="submit" class="button-login">Entrar</button>
+            </form>
         </div>
-
-        <h1 class="login-title">Login</h1>
-
-        <form>
-            <input type="text" class="input-field" placeholder="Nome do Usuário">
-            <input type="password" class="input-field" placeholder="Senha do Usuário">
-            <button type="submit" class="login-button">Entra</button>
-        </form>
     </div>
 
 </body>

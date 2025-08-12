@@ -3,143 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estoque - Refreskar</title>
+    <title>Gerenciamento de Estoque - Refreskar</title>
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <style>
-        /* Estilos gerais da página */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #f0f2f5; /* Fundo cinza claro */
-            color: #333;
+        /* --- ESTILOS GERAIS (Reutilizados do Dashboard) --- */
+        :root {
+            --cor-fundo: #f4f7fa;
+            --cor-sidebar: #1e293b;
+            --cor-sidebar-texto: #cbd5e1;
+            --cor-sidebar-texto-hover: #ffffff;
+            --cor-sidebar-link-ativo: #3b82f6;
+            --cor-principal: #3b82f6;
+            --cor-texto-escuro: #0f172a;
+            --cor-card-fundo: #ffffff;
+            --cor-sombra: rgba(0, 0, 0, 0.05);
+            --cor-sucesso: #22c55e;
+            --cor-alerta: #f59e0b;
+            --cor-perigo: #ef4444;
         }
 
-        /* Container principal para alinhar conteúdo */
-        .page-container {
-            padding: 20px 40px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--cor-fundo); }
+        .dashboard-container { display: flex; min-height: 100vh; }
 
-        /* Cabeçalho com o logo */
-        .header {
-            margin-bottom: 40px;
-        }
+        /* --- SIDEBAR (Estilo idêntico ao do dashboard) --- */
+        .sidebar { width: 260px; background-color: var(--cor-sidebar); color: var(--cor-sidebar-texto); padding: 20px; display: flex; flex-direction: column; }
+        .sidebar-header h1 { color: var(--cor-sidebar-texto-hover); text-align: center; font-weight: 700; letter-spacing: 1px; margin-bottom: 30px; }
+        .sidebar-nav ul { list-style: none; }
+        .sidebar-nav li a { display: flex; align-items: center; gap: 15px; padding: 15px; color: var(--cor-sidebar-texto); text-decoration: none; border-radius: 8px; margin-bottom: 5px; transition: all 0.3s ease; }
+        .sidebar-nav li a i { font-size: 1.4em; }
+        .sidebar-nav li a:hover { background-color: #334155; color: var(--cor-sidebar-texto-hover); }
+        .sidebar-nav li a.active { background-color: var(--cor-sidebar-link-ativo); color: var(--cor-sidebar-texto-hover); font-weight: 600; }
+        .sidebar-footer { margin-top: auto; }
 
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #005a9c; /* Azul do logo */
-        }
+        /* --- CONTEÚDO PRINCIPAL (Estilo da página de estoque) --- */
+        .main-content { flex-grow: 1; padding: 30px; overflow-y: auto; }
+        .main-content h1 { font-size: 1.8em; color: var(--cor-texto-escuro); margin-bottom: 20px; }
         
-        /* Container da barra de pesquisa */
-        .search-container {
+        /* --- BARRA DE AÇÕES COM FILTROS --- */
+        .actions-bar {
             display: flex;
-            justify-content: center;
-            margin-bottom: 40px;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
-
-        .search-bar {
+        .search-container {
+            flex-grow: 1;
             position: relative;
+        }
+        .search-container input {
             width: 100%;
-            max-width: 400px;
+            padding: 12px 15px 12px 40px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-size: 1em;
         }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 40px 12px 15px;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        .search-input:focus {
-            outline: none;
-            border-color: #007bff;
-        }
-
-        .search-icon {
+        .search-container i {
             position: absolute;
-            right: 15px;
+            left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: #777;
-            cursor: pointer;
+            color: #94a3b8;
         }
-
-        /* Container dos resultados */
-        .results-container {
-            display: flex;
-            justify-content: center;
-        }
-
-        /* Cartão do Produto */
-        .product-card {
-            background-color: #808080; /* Fundo cinza escuro do cartão */
+        .actions-bar select {
+            padding: 12px;
             border-radius: 8px;
-            padding: 20px;
+            border: 1px solid #e2e8f0;
+            background-color: white;
+        }
+        .button-primary {
+            background-color: var(--cor-principal);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* --- TABELA DE RESULTADOS --- */
+        .results-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px var(--cor-sombra);
+            overflow-x: auto; /* Para rolagem horizontal em telas pequenas */
+        }
+        table {
             width: 100%;
-            max-width: 280px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        thead {
+            background-color: #f8fafc;
+        }
+        th {
+            font-size: 0.9em;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        tbody tr:hover {
+            background-color: var(--cor-fundo);
+        }
+        .product-cell {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .product-cell img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        .product-info strong {
+            display: block;
+            color: var(--cor-texto-escuro);
+        }
+        .product-info span {
+            font-size: 0.9em;
+            color: #64748b;
+        }
+        
+        /* --- TAG DE STATUS --- */
+        .status-tag {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
             text-align: center;
         }
+        .status-ok { background-color: #dcfce7; color: #166534; }
+        .status-low { background-color: #fef3c7; color: #b45309; }
+        .status-out { background-color: #fee2e2; color: #b91c1c; }
 
-        .product-image {
-            width: 100%;
-            max-width: 240px;
-            height: auto;
-            background-color: white; /* Fundo branco para a imagem */
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 15px;
+        /* --- BOTÕES DE AÇÃO NA TABELA --- */
+        .action-buttons a {
+            color: #64748b;
+            text-decoration: none;
+            margin: 0 8px;
+            font-size: 1.2em;
         }
-
-        .product-info {
-            background-color: #dcdcdc; /* Fundo cinza claro da etiqueta */
-            border: 1px solid #b0b0b0; /* Borda da etiqueta */
-            border-radius: 5px;
-            padding: 10px;
-            cursor: pointer;
+        .action-buttons a:hover {
+            color: var(--cor-principal);
         }
         
-        .product-info-main {
-            font-size: 16px;
-            font-weight: bold;
-            display: block; /* Para ficar na linha de cima */
+        /* --- PAGINAÇÃO --- */
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px;
         }
-        
-        .product-info-sub {
-            font-size: 14px;
-            color: #555;
-            display: block; /* Para ficar na linha de baixo */
+        .pagination a {
+            color: var(--cor-principal);
+            padding: 8px 12px;
+            margin: 0 2px;
+            text-decoration: none;
+            border-radius: 6px;
         }
+        .pagination a.active, .pagination a:hover {
+            background-color: var(--cor-principal);
+            color: white;
+        }
+
     </style>
 </head>
 <body>
-
-    <div class="page-container">
-        <header class="header">
-            <div class="logo">(REFRESKAR)</div>
-        </header>
-
-        <div class="search-container">
-            <div class="search-bar">
-                <input type="text" class="search-input" value="Termostato">
-                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                </svg>
-            </div>
-        </div>
-
-        <main class="results-container">
-            <div class="product-card">
-                <img src="https://i.imgur.com/L8tqTqY.png" alt="Termostato" class="product-image">
-                
-                <div class="product-info">
-                    <span class="product-info-main">20 Termostato</span>
-                    <span class="product-info-sub">Estoque</span>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div>
+                <div class="sidebar-header">
+                    <h1>REFRESKAR</h1>
                 </div>
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li><a href="{{ url('/home') }}"><i class="ph-fill ph-house"></i> Início</a></li>
+                        <li><a href="{{ url('/orcamentos') }}"><i class="ph-fill ph-receipt"></i> Orçamentos</a></li>
+                        <li><a href="{{ url('/estoque') }}" class="active"><i class="ph-fill ph-package"></i> Estoque</a></li>
+                        <li><a href="{{ url('/clientes') }}"><i class="ph-fill ph-users"></i> Clientes</a></li>
+                        <li><a href="{{ url('/fornecedores') }}"><i class="ph-fill ph-truck"></i> Fornecedores</a></li>
+                        <li><a href="{{ url('/gestao') }}"><i class="ph-fill ph-chart-line"></i> Gestão/Financeiro</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="sidebar-footer">
+                 <nav class="sidebar-nav">
+                    <ul>
+                        <li><a href="{{ url('/logout') }}"><i class="ph-fill ph-sign-out"></i> Sair</a></li>
+                    </ul>
+                 </nav>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <h1>Gerenciamento de Estoque</h1>
+
+            <div class="actions-bar">
+                <div class="search-container">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <input type="search" placeholder="Buscar por nome ou SKU...">
+                </div>
+                <select name="categoria">
+                    <option value="">Todas as Categorias</option>
+                    <option value="filtros">Filtros</option>
+                    <option value="compressores">Compressores</option>
+                    <option value="sensores">Sensores</option>
+                </select>
+                <a href="{{ url('/estoque/novo') }}" class="button-primary">
+                    <i class="ph-fill ph-plus-circle"></i>
+                    Adicionar Produto
+                </a>
+            </div>
+
+            <div class="results-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Categoria</th>
+                            <th>Fornecedor</th>
+                            <th>Custo</th>
+                            <th>Venda</th>
+                            <th>Qtd.</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="product-cell">
+                                    <img src="https://i.imgur.com/example-thermostat.png" alt="Termostato">
+                                    <div class="product-info">
+                                        <strong>Termostato Eletrônico</strong>
+                                        <span>SKU: REF-TER-001</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Sensores</td>
+                            <td>ACME Peças</td>
+                            <td>R$ 45,50</td>
+                            <td>R$ 99,90</td>
+                            <td><strong>20</strong></td>
+                            <td><span class="status-tag status-ok">Em Estoque</span></td>
+                            <td class="action-buttons">
+                                <a href="#" title="Editar"><i class="ph-fill ph-pencil-simple"></i></a>
+                                <a href="#" title="Ver Histórico"><i class="ph-fill ph-clock-counter-clockwise"></i></a>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <div class="product-cell">
+                                    <img src="https://i.imgur.com/example-filter.png" alt="Filtro de Ar">
+                                    <div class="product-info">
+                                        <strong>Filtro de Cabine</strong>
+                                        <span>SKU: REF-FIL-004</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Filtros</td>
+                            <td>Filtros Brasil</td>
+                            <td>R$ 18,00</td>
+                            <td>R$ 45,00</td>
+                            <td><strong>8</strong></td>
+                            <td><span class="status-tag status-low">Estoque Baixo</span></td>
+                            <td class="action-buttons">
+                                <a href="#" title="Editar"><i class="ph-fill ph-pencil-simple"></i></a>
+                                <a href="#" title="Ver Histórico"><i class="ph-fill ph-clock-counter-clockwise"></i></a>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="product-cell">
+                                    <img src="https://i.imgur.com/example-compressor.png" alt="Compressor">
+                                    <div class="product-info">
+                                        <strong>Compressor ZEXEL</strong>
+                                        <span>SKU: REF-COM-002</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Compressores</td>
+                            <td>Import Parts</td>
+                            <td>R$ 850,00</td>
+                            <td>R$ 1.490,00</td>
+                            <td><strong>0</strong></td>
+                            <td><span class="status-tag status-out">Fora de Estoque</span></td>
+                            <td class="action-buttons">
+                                <a href="#" title="Editar"><i class="ph-fill ph-pencil-simple"></i></a>
+                                <a href="#" title="Ver Histórico"><i class="ph-fill ph-clock-counter-clockwise"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
             </div>
         </main>
     </div>
-
 </body>
 </html>
