@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 class Principal extends Controller
 {
     function principal(){
-         return View('pagina');
+         return View('paginainicial');
     }
 }
 

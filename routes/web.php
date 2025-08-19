@@ -29,5 +29,18 @@ Route::get('/gestao', [App\Http\Controllers\Gestao::class, 'gestao']);
 
 Route::get('/cadastro', [App\Http\Controllers\cadastrocliente::class, 'cadastrocliente']);
 
-// Commit Teste
-// Commit Teste
+// Rota para a página inicial (Dashboard)
+Route::get('/home', function () {return view('home');});
+
+// Rota para a página de Orçamentos
+Route::get('/orcamentos', function () {return view('orcamento');});
+
+// Rota para a página de Estoque
+Route::get('/estoque', function () {return view('estoque');});
+
+// Rota para a página de Clientes
+// Nota: Esta rota está apontando para 'cadastrocliente.blade.php'
+Route::get('/clientes', function () {return view('cadastrocliente');});
+
+// Rota para a página de Gestão/Financeiro
+Route::get('/gestao', function () {return view('gestao');});

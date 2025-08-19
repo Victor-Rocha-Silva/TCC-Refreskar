@@ -19,12 +19,13 @@
                 </div>
                 <nav class="sidebar-nav">
                     <ul>
-                        <li><a href="#"><i class="ph-fill ph-house"></i> Início</a></li>
-                        <li><a href="#" class="active"><i class="ph-fill ph-receipt"></i> Orçamentos</a></li>
-                        <li><a href="#"><i class="ph-fill ph-package"></i> Estoque</a></li>
-                        <li><a href="#"><i class="ph-fill ph-users"></i> Clientes</a></li>
-                        <li><a href="#"><i class="ph-fill ph-truck"></i> Fornecedores</a></li>
-                        <li><a href="#"><i class="ph-fill ph-chart-line"></i> Gestão</a></li>
+                        <li><a href="{{ url('home') }}"><i class="ph-fill ph-house"></i> Início</a></li>
+                        <li><a href="{{ url('orcamentos') }}"><i class="ph-fill ph-receipt"></i> Orçamentos</a></li>
+                        <li><a href="{{ url('estoque') }}" class="active"><i class="ph-fill ph-package"></i> Estoque</a></li>
+                        <li><a href="{{ url('clientes') }}"><i class="ph-fill ph-users"></i>Clientes</a></li>
+                        <li><a href="{{ url('fornecedores') }}"><i class="ph-fill ph-truck"></i> Fornecedores</a></li>
+                        <li><a href="{{ url('gestao') }}"><i class="ph-fill ph-chart-line"></i> Gestão/Financeiro</a>
+                        </li>
                     </ul>
                 </nav>
             </div>
